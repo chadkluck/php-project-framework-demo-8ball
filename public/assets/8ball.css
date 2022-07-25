@@ -1,0 +1,317 @@
+/* ****************************************************************************
+ * Style Sheet for 8 Ball
+ * ****************************************************************************
+
+	Version: 1.0-20180315-2030
+	Last Modified: 2018-03-15 by Chad Kluck
+	Author: Chad Kluck / https://chadkluck.net
+	
+	GitHub: https://github.com/chadkluck/8ball
+	In Action: https://diversion.chadkluck.net/8ball
+	
+ * -------------------------------------------------------------------------- *
+ 
+	While there is some js working to keep the ball sized within the window
+	and scalable on resize, the initial load sizes the ball and it's components
+	appropriately via CSS.
+	
+	There are no images or js animations, everything is DIV and TEXT. 
+	The DIVs are rounded and filled in, CSS takes care of the fades when js
+	adds or removes classes.
+	
+	The main CSS components to learn from here are centering DIVs within each
+	other, rounding corners to produce circles, and transitions.
+
+ * ************************************************************************** */
+
+/* ****************************************************************************
+ * DEFAULT CSS FOR PLAIN PAGES
+ * ****************************************************************************
+ 
+	This is just the default styles I start most of my projects with.
+	Chad Kluck - https://chadkluck.net
+
+	Fills the html and body out to the edges and positions the div.main in the 
+	center of the page with equal margins on either side.
+	
+	Also sets the font size to 62.5% so that font size rems are easy to calculate
+	ex 1.6rem is 16px, 1.2rem is 12px.
+	
+	Plus it implements border-box
+	
+ * ************************************************************************** */
+
+*, *:before, *:after {
+	box-sizing: border-box;
+}
+
+html {
+	font-size: 62.5%; /* http://snook.ca/archives/html_and_css/font-size-with-rem */
+	/* at 62.5% 1.6rem is 16px, 1.2rem is 12px. Easy to calc relative to px */
+}
+
+body {
+	font-size: 1.6rem; /* = 16px when html font-size: 62.5% */
+}
+
+/* fill out the browser window with the html and body page */
+html, body {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+/* the main container for content, specifies a width for the content column and centers it horiz */
+body > div.main {
+	margin-right: auto;
+	margin-left: auto;
+	height: 100%;
+	width: 100%;
+}
+
+/* ****************************************************************************
+ * ADDITIONAL PAGE FORMATTING
+ * ************************************************************************** */
+
+body {
+	background-color: white;
+	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, "sans-serif";
+	cursor: pointer; /* in order for "onclick" to work on iOS it needs to be a pointer, otherwise a touch needs to be added */
+}
+
+/* customize the div.main for the 8 Ball */
+body > div.main {
+	max-width: 80.0rem;
+	padding: 1.5rem 1.5rem 1.5rem 1.5rem;
+}
+
+/* ****************************************************************************
+ * ACCESSIBILITY
+ * ****************************************************************************
+ 
+	Place the alternate "ask" activator off the screen to be accessible by
+	screen readers
+	
+ * ************************************************************************** */
+ 
+
+/* ****************************************************************************
+ * STYLE FOR THE 8 BALL
+ * ****************************************************************************
+ 
+	We create 3 circles, the black ball, the indigo prediction window, and the
+	white number area. We also position the prediction text within the prediction
+	window, and the number 8 in the number circle. Finally we create transitions
+	between the asking and prediction.
+	
+ * -------------------------------------------------------------------------- *
+ 
+	Making a responsive square to put the circle in:
+	https://spin.atomicobject.com/2015/07/14/css-responsive-square/
+
+	Making a circle from a div tag:
+	https://stackoverflow.com/questions/4840736/easier-way-to-create-circle-div-than-using-an-image
+
+	Centering everything vertically and horizontally:
+	https://stackoverflow.com/questions/5703552/css-center-text-horizontally-and-vertically-inside-a-div-block
+
+ * ************************************************************************** */
+
+/* The square container for the 8 Ball, responsive and centered on the page */
+#the8ball {
+	position: relative;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%,-50%);
+	-ms-transform: translate(-50%,-50%);
+	
+	/* Size relative to the parent */
+	width: 100%;
+}
+
+/* ??? I dunno what this does, but without it the black ball doesn't display well */
+#the8ball:after {
+	content: "";
+	display: block;
+	padding-bottom: 100%;
+}
+
+/* The black circle for the 8 ball */
+#magicBall {
+	position: absolute;	
+	border-radius: 50%;
+	width: 100%;
+	height: 100%;
+	background: black;
+}
+
+/* The indigo circle for the prediction window */
+#magicWindow {
+
+	/* Make it round and vert and horiz centered within the parent */
+	border-radius: 50%;
+	margin-right: auto;
+	margin-left: auto;
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+
+	/* Set size compared to parent */
+	width: 50%;
+	height: 50%;
+	
+	/* color and give it a z-index to not interfere with other elements */
+	background: indigo;
+	z-index: 2;
+	
+	/* Transitions for fade-in/fade-out */
+	opacity: 0;
+	-moz-transition: opacity 3s linear;
+	-o-transition: opacity 3s linear;
+	-webkit-transition: opacity 3s linear;
+	transition: opacity 3s linear;
+}
+
+/* The prediction text */
+#prediction {
+
+	/* Make it vert and horiz centered within the parent */
+	margin-left: auto;
+	margin-right: auto;
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+	
+	/* color, size it, align text, and make it uppercase */
+	display: block;
+	text-transform: uppercase;
+	text-align: center;
+	color: white;
+	
+	/* Set size compared to parent */
+	width: 80%;
+
+	/* Transitions for fade-in/fade-out */
+	opacity: 0; /* default is hidden when page is loaded */
+	-moz-transition: opacity 1s linear;
+	-o-transition: opacity 1s linear;
+	-webkit-transition: opacity 1s linear;
+	transition: opacity 1s linear;
+}
+
+/* When 8 Ball has .reveal class, show it */
+#magicBall.reveal #magicWindow,
+#magicBall.reveal #prediction {
+	opacity: 1;
+}
+
+/* The white circle for the number 8 */
+#magicNumber {
+
+	/* Make it round and vert and horiz centered within the parent */
+	border-radius: 50%;
+	margin-right: auto;
+	margin-left: auto;
+	top: 50%;
+	transform: translateY(-50%);
+	
+	/* How big compared to parent */
+	width: 50%;
+	height: 50%;
+	
+	/* color, size it, align text, and make it uppercase */
+	background: white;
+	z-index: 1;
+	
+	/* Transitions for fade-in/fade-out */
+	opacity: 1; /* default is show when page is loaded */
+	-moz-transition: opacity 4s linear;
+	-o-transition: opacity 4s linear;
+	-webkit-transition: opacity 4s linear;
+	transition: opacity 4s linear;
+}
+
+/* The number 8 inside the white circle */
+#theNumberEight {
+
+	display: block;
+	
+	/* Make it vert and horiz centered within the parent */
+	margin-left: auto;
+	margin-right: auto;
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+	
+	/* Set the size of the div */
+	width: 80%;
+	
+	/* Set font color, size, and align */
+	color: black;
+	font-size: 40vh; /* starting point on page load, but js will use a % of h and w to figure out */
+	text-align: center;
+}
+
+/* When 8 Ball has .reveal class, hide this */
+#magicBall.reveal #magicNumber {
+	opacity: 0;
+}
+
+/* ****************************************************************************
+ * INSTRUCTION OVERLAY
+ * ****************************************************************************
+
+	Display the introductory, instructional text on page load.
+
+ * -------------------------------------------------------------------------- *
+ 
+	https://www.w3schools.com/howto/howto_css_overlay.asp
+
+ * ************************************************************************** */
+ 
+ /* The full page overlay */
+div#magicOverlay {
+
+	/* Styling to produce the overlay effect */
+	position: fixed; /* Sit on top of the page content */
+	width: 100%; /* Full width (cover the whole page) */
+	height: 100%; /* Full height (cover the whole page) */
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0,0,0,0.8); /* Black background with opacity */
+	z-index: 3; /* Specify a stack order in case you're using a different order for other elements */
+	
+	/* in order for "onclick" to work on iOS it needs to be a pointer, otherwise a touch needs to be added */
+	cursor: pointer; /* Add a pointer on hover */
+	
+	/* Transition for fade-out */
+	opacity: 1;
+	-moz-transition: opacity 3s linear;
+	-o-transition: opacity 3s linear;
+	-webkit-transition: opacity 3s linear;
+	transition: opacity 3s linear;
+}
+
+/* When .hidden class is added, don't show the overlay */
+#magicOverlay.hidden {
+	opacity: 0;
+}
+
+/* The div for the text within the overlay */
+#magicOverlay div {
+
+	/* Make it vert and horiz centered on the page */
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%,-50%);
+	-ms-transform: translate(-50%,-50%);
+	
+	/* Set font color, size, and align */
+	font-size: 2.0rem; /* starting font size, the js will resize depending upon % of browser window size */
+	color: white;
+	text-align: center;		
+}
